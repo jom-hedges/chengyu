@@ -18,3 +18,11 @@ fn web_service(_request) {
   let body = bytes_builder.from_string("Hello, Chengyu")
   Response(200, [], mist.Bytes(body))
 }
+
+// MODEL -----------------------------------------------
+
+
+// UPDATE ----------------------------------------------
+
+
+// VIEW ------------------------------------------------
