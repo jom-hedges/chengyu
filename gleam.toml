@@ -17,6 +17,10 @@ gleam_stdlib = "~> 0.34 or ~> 1.0"
 mist = "~> 1.2"
 gleam_http = "~> 3.6"
 gleam_erlang = "~> 0.25"
+lustre = "~> 4.3"
+gleam_json = "~> 2.0"
+lustre_ui = "~> 0.4"
+sqlight = "~> 0.9"
 
 [dev-dependencies]
 gleeunit = "~> 1.0"
