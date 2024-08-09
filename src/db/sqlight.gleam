@@ -6,7 +6,7 @@ pub fn main() {
   let cat_decoder = dynamic.tuple2(dynamic.string, dynamic.string)
 
   let sql = "
-    create table chengyu (zh-def text, en-def, text);
+    create table chengyu (zh-def text, en-def text);
 
     insert into chengyu (zh-def, en-def) values
 
