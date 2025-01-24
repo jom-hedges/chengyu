@@ -31,3 +31,15 @@ pub fn one(req: Request, ctx: Context) -> Response {
 pub type Chengyu {
   Chengyu(zh_text: String, en_text: String)
 }
+
+pub fn create_chengyu() {
+  // TODO: create chengyu function
+}
+
+pub fn list_chengyu() {
+  // TODO: create list_chengyu function
+}
+
+pub read_chengyu() {
+  // TODO: create read_chengyu function
+}
