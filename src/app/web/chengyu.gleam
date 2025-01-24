@@ -32,8 +32,20 @@ pub type Chengyu {
   Chengyu(zh_text: String, en_text: String)
 }
 
-pub fn create_chengyu() {
-  // TODO: create chengyu function
+pub fn create_chengyu(req: Request, ctx: Context) {
+  // Read the JSON from the request body
+  use json <- wisp.require_json(req)
+
+  let result = {
+    // Decode the JSON into a Chengyu record
+    use chengyu <- try(decode_chengyu(json))
+
+    // Save the newly created chengyu to the database
+    use id <- try(save_to_database(ctx.db, chengyu))
+
+    // Construct a JSON payload with the ide of the newly created chengyu
+    Ok(json.to_string_tree(json.object([#("id", json.string(id))])))
+  }
 }
 
 pub fn list_chengyu() {
@@ -42,4 +54,12 @@ pub fn list_chengyu() {
 
 pub read_chengyu() {
   // TODO: create read_chengyu function
+}
+
+fn decode_chengyu(json: Dynamic) -> Result(Chengyu, nil) {
+  // TODO: create decode_chengyu function
+}
+
+fn save_to_database() {
+  // TODO: create save_to_database function
 }
