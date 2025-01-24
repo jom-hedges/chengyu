@@ -1,11 +1,21 @@
-import gleam/dynamic
-import sqlight
-import mist
+import app/router
+import app/web
 import gleam/erlang/process
-import gleam/bytes_builder
-import gleam/http/response.{Response}
+import mist
+import sqlight
+import wisp
+import wisp_mist
+
+pub const data_directory = "tmp/data"
 
 pub fn main() {
+  wisp.configure_logger()
+  let secret_key_base = wisp.random_string(64)
+
+  use db <- sqlight.with_connection("data_directory")
+  
+  let context = web.Context(db: db)
+
   let assert Ok(_) =
     web_service
     |> mist.new
@@ -19,11 +29,3 @@ fn web_service(_request) {
   let body = bytes_builder.from_string("Hello, Chengyu")
   Response(200, [], mist.Bytes(body))
 }
-
-// MODEL -----------------------------------------------
-
-
-// UPDATE ----------------------------------------------
-
-
-// VIEW ------------------------------------------------
