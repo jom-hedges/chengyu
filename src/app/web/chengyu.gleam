@@ -1,9 +1,11 @@
 import app/web.{type Context}
+import bytes_builder
 import gleam/dict
 import gleam/dynamic.{type Dynamic}
 import gleam/http.{Get, Post}
 import gleam/json
 import gleam/result.{try}
+import mist
 import sqlight
 import wisp.{type Request, type Response}
 
@@ -20,7 +22,7 @@ pub fn all(req: Request, ctx: Context) -> Response {
 
 // This request handler is used for all requests to '/chengyu/:id'
 // 
-pub fn one(req: Request, ctx: Context) -> Response {
+pub fn one(req: Request, ctx: Context, id: String) -> Response {
   // Dispatch to appropriate handler based on HTTP method 
   case req.method {
     Get -> read_chengyu(ctx, id)
@@ -48,18 +50,25 @@ pub fn create_chengyu(req: Request, ctx: Context) {
   }
 }
 
-pub fn list_chengyu() {
-  // TODO: create list_chengyu function
+pub fn plain_text_response(text: String) -> Response {
+  // Placeholder: returns 404 Not Found for now
+  wisp.not_found()
 }
 
-pub read_chengyu() {
-  // TODO: create read_chengyu function
+pub fn list_chengyu(ctx: Context) -> Response {
+  plain_text_response("Not implemented")
 }
 
-fn decode_chengyu(json: Dynamic) -> Result(Chengyu, nil) {
-  // TODO: create decode_chengyu function
+pub fn read_chengyu(ctx: Context, id: String) -> Response {
+  plain_text_response("Not implemented")
 }
 
-fn save_to_database() {
-  // TODO: create save_to_database function
+fn decode_chengyu(_json: Dynamic) -> Result(Chengyu, Nil) {
+  // TODO: implement decoding
+  Error(Nil)
+}
+
+fn save_to_database(_db, _chengyu) -> Result(String, Nil) {
+  // TODO: implement saving to database
+  Error(Nil)
 }
