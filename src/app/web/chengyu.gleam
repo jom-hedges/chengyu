@@ -1,6 +1,7 @@
 import app/web.{type Context}
 import bytes_builder
 import gleam/dict
+import gleam/list
 import gleam/dynamic.{type Dynamic}
 import gleam/http.{Get, Post}
 import gleam/json
@@ -56,7 +57,34 @@ pub fn plain_text_response(text: String) -> Response {
 }
 
 pub fn list_chengyu(ctx: Context) -> Response {
-  plain_text_response("Not implemented")
+  let decoder = dynamic.tuple2(dynamic.string, dynamic.string)
+  let query_sql = "select zh_def, en_def from chengyu;"
+  // query the database
+  case sqlight.query(query_sql, ctx.db, [], decoder) {
+    Ok(rows) -> {
+      // Convert the rows into a list of Chengyu
+      let chengyu_list =
+        rows
+        |> list.map(fn(row) {
+          case row {
+            #(zh, en) -> Chengyu(zh_text: zh, en_text: en)
+          }
+        })
+      // Convert the list of Chengyu to JSON
+      let json_value = json.array(
+        chengyu_list
+        |> list.map(fn((Chengyu(zh_text, en_text))) {
+          json.object([
+            #("zh_text", json.string(zh_text)),
+            #("en_text", json.string(en_text))
+          ])
+        })
+      )
+      let json = json.to_string(json_value)
+      wisp.response(200, [], json, "application/json")
+    }
+    Error(_) -> wisp.internal_server_error()
+  }
 }
 
 pub fn read_chengyu(ctx: Context, id: String) -> Response {
