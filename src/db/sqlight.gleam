@@ -6,7 +6,11 @@ pub fn main() {
   let cat_decoder = dynamic.tuple2(dynamic.string, dynamic.string)
 
   let create_table_sql = """
-    create table chengyu (zh_def text, en_def text);
+    create table chengyu (
+      id integer primary key autoincrement,
+      zh_def text,
+      en_def text
+    );
   """
   let assert Ok(Nil) = sqlight.exec(create_table_sql, conn)
 

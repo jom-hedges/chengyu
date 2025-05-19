@@ -88,7 +88,35 @@ pub fn list_chengyu(ctx: Context) -> Response {
 }
 
 pub fn read_chengyu(ctx: Context, id: String) -> Response {
-  plain_text_response("Not implemented")
+  let decoder = dynamic.tuple3(dynamic.int, dynamic.string, dynamic.string)
+  let query_id = "select id, zh_def, en_def from chengyu where id = ?;"
+  // query the database
+  case sqlight.query(query_id, ctx.db, [id], decoder) {
+    Ok(rows) -> {
+      // Convert the rows into a list of Chengyu
+      let chengyu_list =
+        rows
+        |> list.map(fn(row) {
+          case row {
+            #(id, zh, en) -> Chengyu(zh_text: zh, en_text: en)
+          }
+        })
+      // Convert the list of Chengyu to JSON
+      let json_value = json.array(
+        chengyu_list
+        |> list.map(fn((Chengyu(zh_text, en_text))) {
+          json.object([
+            #("zh_text", json.string(zh_text)),
+            #("en_text", json.string(en_text))
+          ])
+        })
+      )
+      let json = json.to_string(json_value)
+      wisp.response(200, [], json, "application/json")
+    }
+    Error(_) -> wisp.internal_server_error()
+  }
+
 }
 
 fn decode_chengyu(_json: Dynamic) -> Result(Chengyu, Nil) {
