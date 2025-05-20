@@ -22,7 +22,7 @@ pub fn all(req: Request, ctx: Context) -> Response {
 }
 
 // This request handler is used for all requests to '/chengyu/:id'
-// 
+//
 pub fn one(req: Request, ctx: Context, id: String) -> Response {
   // Dispatch to appropriate handler based on HTTP method 
   case req.method {
@@ -35,27 +35,26 @@ pub type Chengyu {
   Chengyu(zh_text: String, en_text: String)
 }
 
+// This function is used to create a new Chengyu
 pub fn create_chengyu(req: Request, ctx: Context) {
   // Read the JSON from the request body
   use json <- wisp.require_json(req)
-
-  let result = {
-    // Decode the JSON into a Chengyu record
-    use chengyu <- try(decode_chengyu(json))
-
-    // Save the newly created chengyu to the database
-    use id <- try(save_to_database(ctx.db, chengyu))
-
-    // Construct a JSON payload with the ide of the newly created chengyu
-    Ok(json.to_string_tree(json.object([#("id", json.string(id))])))
+  // Decode the JSON into a Chengyu struct
+  let chengyu = try decode_chengyu(json)
+  // Save the Chengyu to the database   
+  case save_to_database(ctx.db, chengyu) {
+    Ok(id) -> {
+      // Return a 201 Created response with the ID of the new Chengyu
+      let body = json.object([
+        #("id", json.string(id))
+      ])
+      wisp.response(201, [], json.to_string(body), "application/json")
+    }
+    Error(_) -> wisp.internal_server_error()
   }
 }
 
-pub fn plain_text_response(text: String) -> Response {
-  // Placeholder: returns 404 Not Found for now
-  wisp.not_found()
-}
-
+// This function is used to list all Chengyu in the database
 pub fn list_chengyu(ctx: Context) -> Response {
   let decoder = dynamic.tuple2(dynamic.string, dynamic.string)
   let query_sql = "select zh_def, en_def from chengyu;"
@@ -87,6 +86,7 @@ pub fn list_chengyu(ctx: Context) -> Response {
   }
 }
 
+// This function is used to read a single Chengyu from the database
 pub fn read_chengyu(ctx: Context, id: String) -> Response {
   let decoder = dynamic.tuple3(dynamic.int, dynamic.string, dynamic.string)
   let query_id = "select id, zh_def, en_def from chengyu where id = ?;"
